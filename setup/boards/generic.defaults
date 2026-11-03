@@ -1,0 +1,20 @@
+# ESP32-S3 板级配置档 —— 通用安全默认（不假设任何硬件参数）
+#
+# 特点: Flash 容量用 IDF 默认的 2MB、不开 PSRAM。
+#       这套在任何 ESP32-S3 板子上都能正常启动（只是浪费 flash 空间）。
+#       等探测出真实参数后，改用 setup/boards/<板子名>.defaults
+#
+# 用法: cp setup/boards/generic.defaults <工程>/sdkconfig.defaults
+
+CONFIG_IDF_TARGET="esp32s3"
+
+# Flash: 保持 IDF 默认 2MB（最小公认可用容量）
+CONFIG_ESPTOOLPY_FLASHMODE_DIO=y
+CONFIG_ESPTOOLPY_FLASHMODE="dio"
+CONFIG_ESPTOOLPY_FLASHFREQ_40M=y
+CONFIG_ESPTOOLPY_FLASHFREQ="40m"
+CONFIG_ESPTOOLPY_FLASHSIZE_2MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE="2MB"
+
+# PSRAM: 不开（配错模式会开不了机，探测确认前一律关闭）
+# CONFIG_SPIRAM is not set

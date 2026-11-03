@@ -1,0 +1,10 @@
+menu "Board Test"
+
+config TEST_LED_GPIO
+    int "板载 LED 所在的 GPIO 号"
+    default 2
+    help
+        绝大多数 ESP32 开发板的板载 LED 接在 GPIO2。
+        如果灯不闪，把这个值改成你板子实际的引脚号。
+
+endmenu

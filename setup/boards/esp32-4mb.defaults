@@ -1,0 +1,23 @@
+# 自动生成的板级配置模板
+# 目标芯片: esp32   Flash: 4MB   PSRAM: none   分区表: partitions-4mb.csv
+# 生成命令: bash setup/make_sdkconfig_defaults.sh 4MB none partitions-4mb.csv <esp32 根目录> esp32
+#
+# 用法: cp <esp32 根目录> <新工程>/sdkconfig.defaults
+#       注意必须在 `idf.py set-target` 之前复制，否则不生效。
+
+CONFIG_IDF_TARGET="esp32"
+
+# ---- Flash: 4MB ----
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHMODE="dio"
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_ESPTOOLPY_FLASHFREQ="80m"
+CONFIG_ESPTOOLPY_FLASHSIZE_4MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE="4MB"
+
+# ---- 分区表: partitions-4mb.csv ----
+# Kconfig 中真正决定文件名的是 PARTITION_TABLE_CUSTOM_FILENAME，两者都要写。
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions-4mb.csv"
+CONFIG_PARTITION_TABLE_FILENAME="partitions-4mb.csv"
+CONFIG_PARTITION_TABLE_OFFSET=0x8000

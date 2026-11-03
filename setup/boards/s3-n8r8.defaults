@@ -1,0 +1,45 @@
+# ESP32-S3 板级配置档 —— 本机实测板子
+#
+# 实测数据 (2026-11-03, setup/flash_probe.sh + esptool 交叉验证):
+#   芯片      : ESP32-S3 (QFN56), revision v0.2, 双核
+#   eFuse 特征: WiFi, BLE, Embedded PSRAM 8MB (AP_3v3)
+#   Flash     : 8MB, Quad SPI (4 data lines), VDD_SPI 3.3V
+#               JEDEC ID = 20 40 17  ->  容量码 0x17 = 8MB
+#               边界验证: 读 0x700000 成功, 读 0x800000 失败 -> 恰好 8MB
+#   PSRAM     : 8MB, 八线 OCT
+#               验证方式: 按 SPIRAM_MODE_OCT 编译的探测固件能正常启动
+#   MAC       : <本机板子 MAC，见探测输出>
+#   串口      : CP210x 桥 -> /dev/ttyUSB0 (esptool 可自动复位, 无需按 BOOT)
+#
+# 模组推测: ESP32-S3-WROOM-1-N8R8
+#
+# 用法: cp setup/boards/s3-n8r8.defaults <工程>/sdkconfig.defaults
+#       cp setup/boards/partitions-8mb.csv <工程>/
+
+CONFIG_IDF_TARGET="esp32s3"
+
+# ---- Flash: 8MB / Quad SPI / 80MHz ----
+CONFIG_ESPTOOLPY_FLASHMODE_QIO=y
+CONFIG_ESPTOOLPY_FLASHMODE="dio"
+CONFIG_ESPTOOLPY_FLASHFREQ_80M=y
+CONFIG_ESPTOOLPY_FLASHFREQ="80m"
+CONFIG_ESPTOOLPY_FLASHSIZE_8MB=y
+CONFIG_ESPTOOLPY_FLASHSIZE="8MB"
+
+# ---- PSRAM: 8MB 八线 OPI ----
+# 注意: 八线 PSRAM 占用 GPIO35/36/37，这三个引脚不可用
+CONFIG_SPIRAM=y
+CONFIG_SPIRAM_MODE_OCT=y
+CONFIG_SPIRAM_TYPE_AUTO=y
+CONFIG_SPIRAM_SPEED_80M=y
+CONFIG_SPIRAM_SPEED=80
+CONFIG_SPIRAM_CLK_IO=30
+CONFIG_SPIRAM_CS_IO=26
+CONFIG_SPIRAM_USE_MALLOC=y
+CONFIG_SPIRAM_MEMTEST=y
+
+# ---- 分区表: 覆盖 8MB (需把 partitions-8mb.csv 放到工程根目录) ----
+CONFIG_PARTITION_TABLE_CUSTOM=y
+CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions-8mb.csv"
+CONFIG_PARTITION_TABLE_FILENAME="partitions-8mb.csv"
+CONFIG_PARTITION_TABLE_OFFSET=0x8000

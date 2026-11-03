@@ -1,0 +1,28 @@
+# 构建产物
+build/
+sdkconfig
+sdkconfig.old
+sdkconfig.*.bak
+sdkconfig.defaults.tmp
+
+# ESP-IDF
+esp-idf/
+tools/root/
+tools/debs/
+tools/.aptlists/
+tools/.apt-sources.list
+
+# 编译中间文件
+*.o
+*.obj
+*.a
+*.elf
+*.bin
+*.map
+*.log
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+.DS_Store
