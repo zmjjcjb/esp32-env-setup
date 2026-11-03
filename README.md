@@ -145,6 +145,54 @@ bash setup/gen_partitions.sh 16                 # 按容量生成分区表
 
 ---
 
+## VS Code 扩展：状态栏直接看板子信息
+
+仓库里带了一个 VS Code 扩展（`vscode-extension/esp32-board-info/`），
+把"这个口上是什么板子、Flash 多大、有没有 PSRAM"直接放到状态栏：
+
+```
+master | ESP-IDF v5.5.6 | UART | /dev/ttyUSB0 | ESP32-S3 · 8MB · PSRAM 8MB | esp32s3 | ...
+                                                  ↑ ESP32 Board Info 扩展
+```
+
+**它解决的是 ESP-IDF 扩展的一个短板**：ESP-IDF 扩展的状态栏串口是**静态配置值**，
+拔板子重插后不会刷新，很容易拿着过期的 `/dev/ttyUSB0` 去烧录。
+
+### 两种识别方式
+
+| | 被动扫描 | 主动探测 |
+|---|---|---|
+| 触发 | 自动，插上就更新状态栏 | 点「探测」按钮 |
+| 手段 | 读 `/dev` + sysfs 的 USB VID/PID | esptool 复位板子进 bootloader |
+| 副作用 | 无 | **板子会复位一次** |
+| 能得到 | "有个 Espressif 设备在 /dev/ttyACM0" | 芯片型号、Flash、PSRAM、MAC、eFuse 特征 |
+
+认芯片型号**必须**让板子进 bootloader，这个副作用绕不过去 —— 所以本扩展把它放在
+显式的按钮后面，而不是偷偷进行。
+
+### 安装
+
+```bash
+cd vscode-extension/esp32-board-info
+npx @vscode/vsce package
+code --install-extension esp32-board-info-0.1.0.vsix
+```
+
+### 功能
+
+- 状态栏常驻显示芯片型号 / Flash 容量 / PSRAM，插上新板子自动刷新
+- 面板里一键探测完整信息：芯片型号、版本、晶振、Flash 厂商/容量/接口/电压、PSRAM、MAC、eFuse 特征、加密状态
+- **自动匹配** `setup/boards/` 下对应的配置档，可一键应用到当前工程
+- 命令：`ESP32: 板子信息面板` / `扫描串口` / `探测当前串口的芯片` / `应用配置档到当前工程`
+
+核心逻辑有独立测试（不依赖 VS Code）：
+
+```bash
+cd vscode-extension/esp32-board-info && node test/test.js
+```
+
+---
+
 ## 免 root 装 ESP-IDF
 
 很多容器/受限环境里 `sudo` 不可用（内核 `NoNewPrivs=1`），`apt-get install` 装不了
@@ -175,7 +223,7 @@ dpkg -x xxx.deb tools/root/                          # 解压到用户目录
 esp32-env-setup/
 ├── install.sh                     # 一键安装 ESP-IDF + 本工具
 ├── setup/
-│   ├── board.sh                   # 快捷命令定义
+│   ├── board.sh                   # 快捷命令定义 (board / boardprobe / boarduse / boardlist)
 │   ├── setup_board.sh             # ★ 一键流水线（探测->生成->套用->编译->烧录->验证）
 │   ├── flash_probe.sh             # 只探测板子参数
 │   ├── use_board.sh               # 套用配置档到工程
@@ -187,6 +235,8 @@ esp32-env-setup/
 │   ├── setup_toolchain.sh         # 免 root 装工具链
 │   ├── fetch_submodules.sh / fix_submodule.sh
 │   └── boards/                    # 板级配置档
+├── vscode-extension/
+│   └── esp32-board-info/          # VS Code 扩展：状态栏看板子信息
 ├── board_probe/                   # 板子参数探测固件
 ├── esp32_test/                    # 板载自检程序
 └── docs/

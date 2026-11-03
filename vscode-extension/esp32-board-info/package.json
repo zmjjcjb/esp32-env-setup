@@ -1,0 +1,99 @@
+{
+    "name": "esp32-board-info",
+    "displayName": "ESP32 Board Info",
+    "description": "自动识别 ESP32 串口与芯片型号，查看 Flash 容量、PSRAM、MAC 等板级参数",
+    "version": "0.1.0",
+    "publisher": "zmjjcjb",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/zmjjcjb/esp32-env-setup.git"
+    },
+    "engines": {
+        "vscode": "^1.85.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "keywords": [
+        "esp32",
+        "esp-idf",
+        "espressif",
+        "serial",
+        "board"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "esp32BoardInfo.showPanel",
+                "title": "板子信息面板",
+                "category": "ESP32"
+            },
+            {
+                "command": "esp32BoardInfo.scan",
+                "title": "扫描串口",
+                "category": "ESP32"
+            },
+            {
+                "command": "esp32BoardInfo.probe",
+                "title": "探测当前串口的芯片",
+                "category": "ESP32"
+            },
+            {
+                "command": "esp32BoardInfo.applyProfile",
+                "title": "应用配置档到当前工程",
+                "category": "ESP32"
+            }
+        ],
+        "configuration": {
+            "title": "ESP32 Board Info",
+            "properties": {
+                "esp32BoardInfo.root": {
+                    "type": "string",
+                    "default": "${env:HOME}/esp32",
+                    "markdownDescription": "ESP32 工作根目录（含 `setup/boards/` 与 `esp-idf/`）"
+                },
+                "esp32BoardInfo.esptoolPath": {
+                    "type": "string",
+                    "default": "",
+                    "markdownDescription": "esptool 的 python 解释器路径。留空则自动在 `~/.espressif/python_env/` 下查找"
+                },
+                "esp32BoardInfo.autoProbe": {
+                    "type": "boolean",
+                    "default": true,
+                    "markdownDescription": "检测到新串口时自动探测芯片型号（会复位板子）"
+                },
+                "esp32BoardInfo.pollInterval": {
+                    "type": "number",
+                    "default": 2000,
+                    "minimum": 500,
+                    "markdownDescription": "串口轮询间隔（毫秒）"
+                }
+            }
+        },
+        "menus": {
+            "commandPalette": [
+                {
+                    "command": "esp32BoardInfo.showPanel",
+                    "group": "ESP32@1"
+                },
+                {
+                    "command": "esp32BoardInfo.scan",
+                    "group": "ESP32@2"
+                },
+                {
+                    "command": "esp32BoardInfo.probe",
+                    "group": "ESP32@3"
+                },
+                {
+                    "command": "esp32BoardInfo.applyProfile",
+                    "group": "ESP32@4"
+                }
+            ]
+        }
+    }
+}
