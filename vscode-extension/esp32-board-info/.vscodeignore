@@ -1,4 +1,6 @@
 test/
+preview.js
+preview.html
 .vscodeignore
 *.vsix
 node_modules/
